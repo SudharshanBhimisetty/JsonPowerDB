@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <title>JSONPowerDB</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    
+<script src="http://login2explore.com/jpdb/resources/js/0.0.3/jpdb-commons.js"></script>
+</head>
+
+<body>
+    <div class="nav">
+        <h3 class="text-center">Simple CRUD Using JSONPowerDB</h3>
+
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a href="index.html">Insert Data</a></li>
+            <li role="presentation"><a href="read.html">Read Data</a></li>
+            <li role="presentation"><a href="update.html">Update Data</a></li>
+            <li role="presentation"><a href="delete.html">Delete Data</a></li>
+          </ul>
+    </div>
+    </div>
+
+
+    <div class="container">
+
+        <h2>Read Data</h2>
+        <form id="empForm" method="post">
+            <div class="form-group">
+                <label for="empName">Employee Name:</label>
+                <input type="text" class="form-control" id="empName" placeholder="Enter Employee Name" name="empName" required>
+            </div>
+            <input type="button" class="btn btn-primary" id="empSave" value="Get Result" onclick="readEmployee();">
+        </form>
+
+
+        <div id="show"></div>
+
+    </div>
+
+
+    <script>
+        $("#empId").focus();
+
+        function validateAndGetFormData() {
+            var empNameVar = $("#empName").val();
+            if (empNameVar === "") {
+                alert("Employee Name is Required Value");
+                $("#empName").focus();
+                return "";
+            }
+            var jsonStrObj = {
+                empName: empNameVar,
+            };
+            return JSON.stringify(jsonStrObj);
+        }
+
+
+        function resetForm() {
+         
+            $("#empName").val("");
+            $("#empName").focus();
+        }
+
+
+        function readEmployee() {
+            var jsonStr = validateAndGetFormData();
+            if (jsonStr === "") {
+                return;
+            }
+            var getReqStr = createGETRequest("90935615|",
+                "SAMPLE", "EMP-REL",jsonStr);
+            console.log("hello " +  getReqStr +  "yesss");
+
+           jQuery.ajaxSetup({
+                async: false
+            });
+
+            var resultObj = executeCommandAtGivenBaseUrl(getReqStr,
+                "http://api.login2explore.com:5577", "/api/irl");
+       
+            console.log("-----------")
+            console.log(JSON.stringify(resultObj));
+
+            var data = JSON.stringify(resultObj)
+            var res = data.split("\"");
+
+            var show = document.getElementById("show");
+
+               show.innerHTML+= "<br><div>EmpId : " + res[6].replace("\\","") + "  Name : "  + res[10].replace("\\","")
+                + " Email : " + res[14].replace("\\","") + "</div>";      
+             jQuery.ajaxSetup({
+                async: true
+            }); 
+
+            resetForm();
+
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <title>JSONPowerDB</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    
+<script src="http://login2explore.com/jpdb/resources/js/0.0.3/jpdb-commons.js"></script>
+</head>
+
+<body>
+    <div class="nav">
+        <h3 class="text-center">Simple CRUD Using JSONPowerDB</h3>
+
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a href="index.html">Insert Data</a></li>
+            <li role="presentation"><a href="read.html">Read Data</a></li>
+            <li role="presentation"><a href="update.html">Update Data</a></li>
+            <li role="presentation"><a href="delete.html">Delete Data</a></li>
+          </ul>
+    </div>
+    </div>
+
+
+    <div class="container">
+
+        <h2>Update Data</h2>
+        <form id="empForm" method="post">
+            <div class="form-group">
+                <span><label for="empId">Employee ID:</label> <label id="empIdMsg">
+                    </label></span>
+                <input type="text" class="form-control" name="empId" id="empId" placeholder="Enter Employee ID"
+                    required>
+            </div>
+
+
+
+           <h4 style="margin-top:80px"> Change the name and Email of the above Id</h4>
+
+            <div class="form-group">
+                <label for="empName">Update Name:</label>
+                <input type="text" class="form-control" id="empName" placeholder="Enter Employee Name" name="empName">
+            </div>
+            <div class="form-group">
+                <label for="empEmail">Update Email:</label>
+                <input type="email" class="form-control" id="empEmail" placeholder="Enter Employee Email"
+                    name="empEmail">
+            </div>
+            <input type="button" class="btn btn-primary" id="empSave" value="Save" onclick="updateEmployee();">
+        </form>
+    </div>
+    <script>
+         function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+            var url = dbBaseUrl + apiEndPointUrl;
+            var jsonObj;
+            $.post(url, reqString, function (result) {
+                jsonObj = JSON.parse(result);
+            }).fail(function (result) {
+                var dataJsonObj = result.responseText;
+                jsonObj = JSON.parse(dataJsonObj);
+            });
+            return jsonObj;
+        }
+        function updateEmployee(){
+            var token = "90937136|";
+            var dbname = "CourseData";
+            var relationName = "Candidate-Data";
+            var empIdVar = $("#empId").val()
+            empIdVar = parseInt(empIdVar);
+            var empName = $("#empName").val()
+            var empEmail = $("#empEmail").val()
+            var jsonObj = {
+                empName : empName,
+                empEmail : empEmail
+            };
+
+            var reqString = createUPDATERecordRequest(token, JSON.stringify(jsonObj), dbname, relationName, empIdVar);
+            alert(reqString);
+            jQuery.ajaxSetup({async: false});
+            var resultObj = executeCommand(reqString,
+                    "http://api.login2explore.com:5577", "/api/iml");
+            jQuery.ajaxSetup({async: true});
+            alert(JSON.stringify(resultObj));
+            
+        }
+    </script>
+</body>
+
+</html>
